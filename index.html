@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Previsões - Aviator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #222;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: #333;
+            border-radius: 10px;
+        }
+
+        button {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #e64a19;
+        }
+
+        #resultado {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        #alerta {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #444;
+            padding: 5px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Simulador de Previsões - Aviator</h1>
+        <button onclick="gerarMultiplicador()">🔄 Gerar Multiplicador</button>
+        <div id="resultado"></div>
+        <div id="alerta"></div>
+        <h2>📊 Últimos 10 Resultados:</h2>
+        <ul id="historico"></ul>
+    </div>
+    <script>
+        let multiplicadores = [];
+
+        function gerarMultiplicador() {
+            let novoMultiplicador = (Math.random() * (10 - 1.01) + 1.01).toFixed(2);
+            multiplicadores.push(parseFloat(novoMultiplicador));
+
+            document.getElementById("resultado").innerHTML = `🎲 Multiplicador: <strong>${novoMultiplicador}x</strong>`;
+
+            atualizarHistorico();
+            analisarTendencias();
+        }
+
+        function atualizarHistorico() {
+            let historicoEl = document.getElementById("historico");
+            historicoEl.innerHTML = "";
+
+            let ultimos = multiplicadores.slice(-10);
+            ultimos.forEach(multi => {
+                let li = document.createElement("li");
+                li.textContent = `${multi}x`;
+                historicoEl.appendChild(li);
+            });
+        }
+
+        function analisarTendencias() {
+            if (multiplicadores.length < 10) {
+                document.getElementById("alerta").innerHTML = "⏳ Aguardando mais dados...";
+                return;
+            }
+
+            let ultimos10 = multiplicadores.slice(-10);
+            let baixos = ultimos10.filter(m => m < 2).length;
+            let altos = ultimos10.filter(m => m >= 2).length;
+
+            let alertaEl = document.getElementById("alerta");
+            if (baixos >= 7) {
+                alertaEl.innerHTML = "⚠️ Alerta: Muitas rodadas abaixo de 2x! Cuidado!";
+                alertaEl.style.color = "red";
+            } else if (altos >= 7) {
+                alertaEl.innerHTML = "✅ Tendência positiva: Muitas rodadas acima de 2x!";
+                alertaEl.style.color = "green";
+            } else {
+                alertaEl.innerHTML = "🔍 Sem tendência clara.";
+                alertaEl.style.color = "white";
+            }
+        }
+    </script>
+</body>
+</html>
